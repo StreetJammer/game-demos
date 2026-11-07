@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#091e1b">
+  <title>Sand Lab</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #091e1b; }
+    body { display: flex; align-items: center; justify-content: center; touch-action: none; -webkit-user-select: none; user-select: none; }
+    #frame { position: relative; height: 100%; width: 100%; max-width: calc(100vh * 0.5625); }
+    #unity-canvas { display: block; width: 100%; height: 100%; background: #091e1b; outline: none; }
+    #loader { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: #f4f1df; font: 16px/1.4 Arial, Helvetica, sans-serif; background: linear-gradient(#5d8679, #3f6159); }
+    #loader h1 { margin: 0; font-weight: 400; letter-spacing: .12em; font-size: 34px; }
+    #bar { width: 62%; height: 3px; background: rgba(244, 241, 223, .25); }
+    #fill { width: 0; height: 100%; background: #f4f1df; transition: width .2s; }
+    #message { position: absolute; left: 16px; right: 16px; bottom: 16px; text-align: center; color: #f4f1df; font: 14px Arial, Helvetica, sans-serif; display: none; }
+  </style>
+</head>
+<body>
+  <div id="frame">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="loader"><h1>Sand Lab</h1><div id="bar"><div id="fill"></div></div><div>Preparing your world…</div></div>
+    <div id="message"></div>
+  </div>
+  <script>
+    // Desktop browsers do not support orientation locking; ignore that refusal instead of reporting an error.
+    if (window.screen && screen.orientation && typeof screen.orientation.lock === 'function') {
+      const lock = screen.orientation.lock.bind(screen.orientation);
+      screen.orientation.lock = (...args) => lock(...args).catch(() => {});
+    }
+    const canvas = document.querySelector('#unity-canvas');
+    const fill = document.querySelector('#fill');
+    const message = document.querySelector('#message');
+    const show = (text) => { message.textContent = text; message.style.display = 'block'; };
+    const config = {
+      dataUrl: 'Build/webgl.data.unityweb',
+      frameworkUrl: 'Build/webgl.framework.js.unityweb',
+      codeUrl: 'Build/webgl.wasm.unityweb',
+      streamingAssetsUrl: 'StreamingAssets',
+      companyName: "Zwings",
+      productName: "Sand Lab",
+      productVersion: "1.0.0",
+      matchWebGLToCanvasSize: true,
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2.5),
+      showBanner: (text, type) => { if (type === 'error') show(text); },
+    };
+    const script = document.createElement('script');
+    script.src = 'Build/webgl.loader.js';
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => { fill.style.width = (100 * progress) + '%'; })
+        .then(() => { document.querySelector('#loader').style.display = 'none'; canvas.focus(); })
+        .catch((error) => show('This demo could not start: ' + error));
+    };
+    script.onerror = () => show('This demo could not be loaded. Please reload the page.');
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>
