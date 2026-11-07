@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Glyphwild</title>
+    <link rel="icon" href="data:,">
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #05060a; }
+      #game { position: fixed; inset: 0; }
+      #unity-canvas { width: 100%; height: 100%; display: block; background: #05060a; touch-action: none; outline: none; }
+      #loading { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center;
+                 font: 600 16px/1.4 Consolas, "Courier New", monospace; color: #7fe7ff; letter-spacing: 0.08em; }
+      #bar { width: 220px; height: 6px; margin-top: 12px; background: #142030; border-radius: 3px; overflow: hidden; }
+      #fill { width: 0%; height: 100%; background: linear-gradient(90deg, #36d6ff, #ff4fd8); }
+      #error { position: absolute; left: 50%; top: 10%; transform: translateX(-50%); max-width: 90%; padding: 10px 14px;
+               background: #3a0b14; color: #ffd6dc; font: 14px/1.4 Arial, sans-serif; border-radius: 6px; display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="game">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="loading">Glyphwild<div id="bar"><div id="fill"></div></div></div>
+      <div id="error"></div>
+    </div>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      function showBanner(msg, type) {
+        if (type !== 'error') { console.warn(msg); return; }
+        var e = document.querySelector("#error"); e.textContent = msg; e.style.display = 'block';
+      }
+      var buildUrl = "Build";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/fa38c19526d91fc6d139baaa62c986c3.data.unityweb",
+        frameworkUrl: buildUrl + "/d25ba467e7a56ff6ad92506c6c01d2e2.framework.js.unityweb",
+        codeUrl: buildUrl + "/847905522adf0520498a7fd1e17433c1.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Codester",
+        productName: "Glyphwild",
+        productVersion: "0.1.0",
+        showBanner: showBanner,
+        autoSyncPersistentDataPath: true,
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+      };
+      var script = document.createElement("script");
+      script.src = buildUrl + "/bf2c10cf100c4bdc343e1e07302d14d7.loader.js";
+      script.onload = function () {
+        createUnityInstance(canvas, config, function (p) {
+          document.querySelector("#fill").style.width = (100 * p) + "%";
+        }).then(function () {
+          document.querySelector("#loading").style.display = "none";
+          canvas.focus();
+        }).catch(function (message) { showBanner(String(message), 'error'); });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
