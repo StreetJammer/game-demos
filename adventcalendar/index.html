@@ -10,7 +10,7 @@
   <body>
     <div id="unity-container" class="unity-desktop">
       <div id="unity-fullscreen-container">
-        <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+        <canvas id="unity-canvas" width="540" height="960" tabindex="-1"></canvas>
         <div id="unity-loading-container">
           <div id="unity-loading-bar">
             <div id="unity-logo"></div>
@@ -57,12 +57,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/webgl.loader.js";
+      var loaderUrl = buildUrl + "/bce68debabf17eff04367bcbe2d1ecf2.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/webgl.data.unityweb",
-        frameworkUrl: buildUrl + "/webgl.framework.js.unityweb",
-        codeUrl: buildUrl + "/webgl.wasm.unityweb",
+        dataUrl: buildUrl + "/c07a2603638930f21239008ea9856e56.data.unityweb",
+        frameworkUrl: buildUrl + "/e6267b59208299b3b0ade6400cfa122a.framework.js.unityweb",
+        codeUrl: buildUrl + "/8865e1f9ef159508167395d4379283bc.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
 
         // If you have a custom web site structure, or want to place multiple Unity build instances on the same page,
@@ -92,7 +92,7 @@
       // If you would like all file writes inside Unity Application.persistentDataPath
       // directory to automatically persist so that the contents are remembered when
       // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
+      config.autoSyncPersistentDataPath = true;
       // This autosyncing is currently not the default behavior to avoid regressing
       // existing user projects that might rely on the earlier manual
       // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
@@ -108,15 +108,19 @@
         document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
+        // Cap the canvas resolution on phones (very high pixel ratios cost frame rate for no visible gain).
+        config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
 
       } else {
-        // Desktop style: Render the game canvas container in a window that can be maximized to fullscreen:
-        fullscreenContainer.style.width = "960px";
-        fullscreenContainer.style.height = "600px";
+        // Desktop style: a portrait window scaled down to fit the browser height (room left for the footer).
+        function fitDesktop() {
+          var h = Math.max(320, Math.min(960, window.innerHeight - 64));
+          fullscreenContainer.style.height = h + "px";
+          fullscreenContainer.style.width = Math.round(h * 540 / 960) + "px";
+        }
+        fitDesktop();
+        window.addEventListener("resize", fitDesktop);
       }
 
 
