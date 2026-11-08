@@ -32,19 +32,19 @@
       var buildUrl = "Build";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/fa38c19526d91fc6d139baaa62c986c3.data.unityweb",
-        frameworkUrl: buildUrl + "/d25ba467e7a56ff6ad92506c6c01d2e2.framework.js.unityweb",
-        codeUrl: buildUrl + "/847905522adf0520498a7fd1e17433c1.wasm.unityweb",
+        dataUrl: buildUrl + "/ba8d18f5daaef4a91fcc907cad0ff629.data.unityweb",
+        frameworkUrl: buildUrl + "/5c15aaddce475fe0f0963c43659eb5b9.framework.js.unityweb",
+        codeUrl: buildUrl + "/f980abab5afea308008de1b38d6adf4d.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Codester",
         productName: "Glyphwild",
-        productVersion: "0.1.0",
+        productVersion: "1.0.0",
         showBanner: showBanner,
         autoSyncPersistentDataPath: true,
         devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
       };
       var script = document.createElement("script");
-      script.src = buildUrl + "/bf2c10cf100c4bdc343e1e07302d14d7.loader.js";
+      script.src = buildUrl + "/b6b94bbb7b7f0bb59065722f69008634.loader.js";
       script.onload = function () {
         createUnityInstance(canvas, config, function (p) {
           document.querySelector("#fill").style.width = (100 * p) + "%";
