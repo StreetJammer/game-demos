@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#fbf8f0">
+    <title>Pastel Painter 3D - Demo</title>
+    <link rel="icon" href="data:,">
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #fbf8f0; }
+      body { position: fixed; inset: 0; touch-action: none; -webkit-user-select: none; user-select: none; }
+      #stage { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #fbf8f0; }
+      #unity-canvas { display: block; width: 100%; height: 100%; background: #fbf8f0; outline: none; }
+      #loading { position: absolute; left: 12%; right: 12%; top: 50%; transform: translateY(-50%); text-align: center;
+        font: 600 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #6b5a6e; letter-spacing: .04em; }
+      #bar { margin-top: 12px; height: 8px; border: 1px solid #e58fa6; border-radius: 4px; overflow: hidden; }
+      #fill { width: 0; height: 100%; background: #f2a7b8; transition: width .2s linear; }
+      #message { position: absolute; left: 8px; right: 8px; bottom: 8px; display: none; padding: 10px 12px; border-radius: 4px;
+        font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #3d3340; background: #f4e6d8; }
+      #message.error { color: #fff; background: #a8322d; }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="loading">Pastel Painter 3D<div id="bar"><div id="fill"></div></div></div>
+      <div id="message"></div>
+    </div>
+    <script>
+      (function () {
+        var stage = document.getElementById("stage");
+        var canvas = document.getElementById("unity-canvas");
+        var loading = document.getElementById("loading");
+        var fill = document.getElementById("fill");
+        var message = document.getElementById("message");
+
+        // Largest 9:16 portrait box that fits the window, centred.
+        function fit() {
+          var w = window.innerWidth, h = window.innerHeight;
+          var width = Math.min(w, h * 9 / 16);
+          var height = width * 16 / 9;
+          stage.style.width = Math.floor(width) + "px";
+          stage.style.height = Math.floor(height) + "px";
+        }
+        window.addEventListener("resize", fit);
+        window.addEventListener("orientationchange", fit);
+        fit();
+
+        function showMessage(text, type) {
+          if (type === "warning") { console.warn(text); return; }
+          message.textContent = text;
+          message.className = type === "error" ? "error" : "";
+          message.style.display = "block";
+          if (type !== "error") setTimeout(function () { message.style.display = "none"; }, 5000);
+        }
+
+        var buildUrl = "Build";
+        var config = {
+          arguments: [],
+          dataUrl: buildUrl + "/b44037fd3442d35d74b99f6a7fdc6453.data.unityweb",
+          frameworkUrl: buildUrl + "/b9a01e23110de067a106864f894d6ccc.framework.js.unityweb",
+          codeUrl: buildUrl + "/b55040585e9c35b7f6b807ff33ea9248.wasm.unityweb",
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "Zwings LLC",
+          productName: "Pastel Painter 3D",
+          productVersion: "1.0.0",
+          // Without this, files written to Application.persistentDataPath never reach IndexedDB.
+          autoSyncPersistentDataPath: true,
+          showBanner: showMessage
+        };
+        // Phones report a device pixel ratio of 3 or more; 2 keeps the art sharp at a lower fill cost.
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+        var script = document.createElement("script");
+        script.src = buildUrl + "/6c6268aa370fbb7a4aa1e5d9f08405b7.loader.js";
+        script.onload = function () {
+          createUnityInstance(canvas, config, function (progress) {
+            fill.style.width = Math.round(100 * progress) + "%";
+          }).then(function () {
+            loading.style.display = "none";
+            canvas.focus();
+          }).catch(function (error) {
+            showMessage(String(error), "error");
+          });
+        };
+        script.onerror = function () { showMessage("The game files could not be loaded. Please reload the page.", "error"); };
+        document.body.appendChild(script);
+      })();
+    </script>
+  </body>
+</html>
