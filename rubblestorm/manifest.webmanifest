@@ -1,0 +1,11 @@
+{
+  "name": "Rubblestorm",
+  "short_name": "Rubblestorm",
+  "description": "A destructible pixel-art arena shooter. Every pixel breaks.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0d0b14",
+  "theme_color": "#0d0b14"
+}
